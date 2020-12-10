@@ -35,9 +35,11 @@ jQuery( document ).ready( function( $ ) {
 		// send action now
 		send_action_to_archive_manager( action );
 		// set loop for pinging server
+		/*
 		refreshTimer = setInterval( function() {
 			send_action_to_archive_manager( 'ping' );
 		}, REFRESH_EVERY_X_SECONDS * 1000 );
+		*/
 	}
 
 	// where action is one of 'start', 'continue', 'cancel'
