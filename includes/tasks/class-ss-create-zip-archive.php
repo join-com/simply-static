@@ -3,6 +3,9 @@ namespace Simply_Static;
 
 require_once( ABSPATH . 'wp-admin/includes/class-pclzip.php' );
 
+use Google\Cloud\Storage\StorageClient;
+use function Env\env;
+
 class Create_Zip_Archive_Task extends Task {
 
 	/**
@@ -35,11 +38,31 @@ class Create_Zip_Archive_Task extends Task {
 		Util::debug_log( "Fetching list of files to include in zip" );
 		$files = array();
 		$iterator = new \RecursiveIteratorIterator( new \RecursiveDirectoryIterator( $archive_dir, \RecursiveDirectoryIterator::SKIP_DOTS ) );
-		foreach ( $iterator as $file_name => $file_object ) {
-			$files[] = realpath( $file_name );
-		}
 
-		do_action('push_file_to_google_cloud', $archive_dir, $iterator);
+		$bucket = false;
+		try {
+			$cred = env('GOOGLE_APPLICATION_CREDENTIALS', false);
+			$bucket_name = env('GOOGLE_APPLICATION_BUCKET', false);
+			if ($cred && $bucket_name) {
+				$storage = new StorageClient([
+					'keyFile' => json_decode(file_get_contents($cred), true)
+				]);
+				$bucket = $storage->bucket($bucket_name);
+			}
+		} catch (Exception $e) {
+			return false;
+		}
+		foreach ($iterator as $file_name => $file_object) {
+			$files[] = realpath( $file_name );
+			if ($bucket) {
+				$fileContent = file_get_contents($file_object);
+			    $cloudPath = str_replace($archive_dir, '', $file_name);
+			    $storageObject = $bucket->upload(
+			        $fileContent,
+			        ['name' => $cloudPath]
+			    );
+			}
+		}
 
 		Util::debug_log( "Creating zip archive" );
 		if ( $zip_archive->create( $files, PCLZIP_OPT_REMOVE_PATH, $archive_dir ) === 0 ) {
