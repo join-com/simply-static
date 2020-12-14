@@ -38,7 +38,9 @@ class Create_Zip_Archive_Task extends Task {
 		foreach ( $iterator as $file_name => $file_object ) {
 			$files[] = realpath( $file_name );
 		}
-		do_action('push_file_to_google_cloud', $iterator);
+
+		do_action('push_file_to_google_cloud', $archive_dir, $iterator);
+
 		Util::debug_log( "Creating zip archive" );
 		if ( $zip_archive->create( $files, PCLZIP_OPT_REMOVE_PATH, $archive_dir ) === 0 ) {
 			return new \WP_Error( 'create_zip_failed', __( 'Unable to create ZIP archive', 'simply-static' ) );
