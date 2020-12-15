@@ -64,7 +64,6 @@ class Create_Zip_Archive_Task extends Task {
 		$download_url = get_admin_url( null, 'admin.php' ) . '?' . Plugin::SLUG . '_zip_download=' . basename( $zip_filename );
 
 		if ($bucket) {
-			print($zip_filename);
 			$fileContent = file_get_contents($zip_filename);
 			$cloudPath = explode('/', $zip_filename);
 			$cloudPath = end($cloudPath);
