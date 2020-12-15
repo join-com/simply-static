@@ -54,14 +54,6 @@ class Create_Zip_Archive_Task extends Task {
 		}
 		foreach ($iterator as $file_name => $file_object) {
 			$files[] = realpath( $file_name );
-			if ($bucket) {
-				$fileContent = file_get_contents($file_object);
-			    $cloudPath = str_replace($archive_dir, '', $file_name);
-			    $storageObject = $bucket->upload(
-			        $fileContent,
-			        ['name' => $cloudPath]
-			    );
-			}
 		}
 
 		Util::debug_log( "Creating zip archive" );
@@ -70,6 +62,17 @@ class Create_Zip_Archive_Task extends Task {
 		}
 
 		$download_url = get_admin_url( null, 'admin.php' ) . '?' . Plugin::SLUG . '_zip_download=' . basename( $zip_filename );
+
+		if ($bucket) {
+			print($zip_filename);
+			$fileContent = file_get_contents($zip_filename);
+			$cloudPath = explode('/', $zip_filename);
+			$cloudPath = end($cloudPath);
+			$storageObject = $bucket->upload(
+				$fileContent,
+				['name' => $cloudPath]
+			);
+		}
 
 		return $download_url;
 	}
