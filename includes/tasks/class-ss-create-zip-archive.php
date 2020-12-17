@@ -45,7 +45,7 @@ class Create_Zip_Archive_Task extends Task {
 			$bucket_name = env('GOOGLE_APPLICATION_BUCKET', false);
 			if ($cred && $bucket_name) {
 				$storage = new StorageClient([
-					'keyFile' => json_decode(file_get_contents($cred), true)
+					'keyFile' => json_decode($cred, true)
 				]);
 				$bucket = $storage->bucket($bucket_name);
 			}
