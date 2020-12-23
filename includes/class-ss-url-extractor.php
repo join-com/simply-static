@@ -165,7 +165,7 @@ class Url_Extractor {
 		}
 
 		// failsafe URL replacement
-		if ( $this->static_page->is_type( 'html' ) || $this->static_page->is_type( 'css' ) || $this->static_page->is_type( 'xml' ) ) {
+		if ( $this->static_page->is_type( 'html' ) || $this->static_page->is_type( 'css' ) ) {
 			$this->replace_urls();
 		}
 
