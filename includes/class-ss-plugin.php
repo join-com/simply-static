@@ -14,7 +14,7 @@ class Plugin {
 	 * Plugin version
 	 * @var string
 	 */
-	const VERSION = '2.1.0';
+	const VERSION = '2.1.0.1';
 
 	/**
 	 * The slug of the plugin; used in actions, filters, i18n, table names, etc.
@@ -368,6 +368,7 @@ class Plugin {
 			->assign( 'destination_url_type', $this->options->get( 'destination_url_type' ) )
 			->assign( 'relative_path', $this->options->get( 'relative_path' ) )
 			->assign( 'http_basic_auth_digest', $this->options->get( 'http_basic_auth_digest' ) )
+			->assign( 'destination_static_url', $this->options->get( 'destination_static_url' ) )
 			->render();
 	}
 
@@ -429,8 +430,14 @@ class Plugin {
 			$this->options->set( 'http_basic_auth_digest', $http_basic_auth_digest );
 		}
 
+        $destination_static_url = '';
+        if (isset($_POST['destination_static_url'])) {
+            $destination_static_url = $_POST['destination_static_url'];
+        }
+
 		// Save settings
 		$this->options
+			->set( 'destination_static_url', $destination_static_url )
 			->set( 'destination_scheme', $destination_scheme )
 			->set( 'destination_host', $destination_host )
 			->set( 'temp_files_dir', Util::trailingslashit_unless_blank( $this->fetch_post_value( 'temp_files_dir' ) ) )

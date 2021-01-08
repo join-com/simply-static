@@ -165,7 +165,10 @@ class Url_Extractor {
 		}
 
 		// failsafe URL replacement
-		if ( $this->static_page->is_type( 'html' ) || $this->static_page->is_type( 'css' ) || $this->static_page->is_type( 'xml' ) ) {
+		if ( $this->static_page->is_type( 'xml' ) ) {
+            $this->replace_urls_in_xml();
+        }
+		if ( $this->static_page->is_type( 'html' ) || $this->static_page->is_type( 'css' ) ) {
 			$this->replace_urls();
 		}
 
@@ -210,6 +213,18 @@ class Url_Extractor {
 
 		$this->save_body( $response_body );
 	}
+
+    public function replace_urls_in_xml() {
+        $destination_url = $this->options->get( 'destination_static_url' );
+        if (!$destination_url) {
+            $destination_url = $this->options->get_destination_url();
+        }
+		$response_body = $this->get_body();
+		$response_body = preg_replace( '/(https?:)?\/\/' . addcslashes( Util::origin_host(), '/' ) . '/i', $destination_url, $response_body );
+		$response_body = str_replace( addcslashes( Util::origin_url(), '/' ), addcslashes( $destination_url, '/' ), $response_body );
+		$response_body = preg_replace( '/(https?%3A)?%2F%2F' . addcslashes( urlencode( Util::origin_host() ), '.' ) . '/i', urlencode( $destination_url ), $response_body );
+		$this->save_body( $response_body );
+    }
 
 	/**
 	 * Extract URLs and convert URLs to absolute URLs for each tag
@@ -429,6 +444,9 @@ class Url_Extractor {
 	 * @return string      Converted URL
 	 */
 	private function convert_url( $url ) {
+        if (strpos($this->static_page->url, 'sitemap.xml') !== false) {
+            return $url;
+        }
 		if ( $this->options->get( 'destination_url_type' ) == 'absolute' ) {
 			$url = $this->convert_absolute_url( $url );
 		} else if ( $this->options->get( 'destination_url_type' ) == 'relative' ) {

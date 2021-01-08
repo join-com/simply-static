@@ -29,6 +29,14 @@ namespace Simply_Static;
 							<p><?php _e( "When exporting your static site, any links to your WordPress site will be replaced by one of the following: absolute URLs, relative URLs, or URLs contructed for offline use.", 'simply-static' ); ?></p>
 						</td>
 					</tr>
+                    <tr>
+						<th>
+							<label><?php _e( "Static server URL", 'simply-static' );?></label>
+						</th>
+						<td>
+							<input type="text" name="destination_static_url" value="<?php echo esc_attr( $this->destination_static_url ); ?>" />
+						</td>
+					</tr>
 					<tr>
 						<th></th>
 						<td class='url-dest-option'>
