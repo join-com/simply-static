@@ -202,6 +202,8 @@ class Url_Extractor {
 		$destination_url = $this->options->get_destination_url();
 		$response_body = $this->get_body();
 
+		$response_body = preg_replace('/storage.googleapis.com\/join-public-pages-static-assets/', 'cdn-public-assets.join.com', $response_body);
+
 		// replace any instance of the origin url, whether it starts with https://, http://, or //
 		$response_body = preg_replace( '/(https?:)?\/\/' . addcslashes( Util::origin_host(), '/' ) . '/i', $destination_url, $response_body );
 		// replace wp_json_encode'd urls, as used by WP's `concatemoji`
